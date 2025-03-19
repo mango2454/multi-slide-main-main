@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #F3F3F3;
+        }
+        .slide-container {
+            width: 100%;
+            max-width: 1800px;
+            margin: 200px auto;
+            overflow: hidden;
+            position: relative;
+            /* left: 100px; */
+            
+        }
+        .slide-wrapper {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            width: 80%;
+            gap: 20px;
+
+        }
+        img {
+            width: 400px;
+            height: 500px;
+            border-radius: 30px;
+            
+        }
+        .slide-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+    </style>
+<body>
+    <div class="slide-container">
+        <div class="slide-wrapper">
+            <ul>
+                <li><img src="./image/store-card-40-ipad-202503_GEO_KR.jpg" alt=""></li>
+                <li><img src="./image/store-card-40-ipad-air-202503.jpg" alt=""></li>
+                <li><img src="./image/store-card-40-iphone-16-pro-202409.jpg" alt=""></li>
+                <li><img src="./image/store-card-40-iphone-16e-202502_GEO_KR.jpg" alt=""></li>
+                <li><img src="./image/store-card-40-mac-studio-202503.jpg" alt=""></li>
+                <li><img src="./image/store-card-40-macbook-air-202503.jpg" alt=""></li>
+            </ul>
+        </div>
+    </div>
+    <button class="slide-btn prev">&#10094;</button>
+    <button class="slide-btn next">&#10095;</button>
+    <script>
+        const slideWrapper = document.querySelector(".slide-wrapper ul");
+        const slides = document.querySelectorAll(".slide-wrapper ul li");
+        const prevBtn = document.querySelector(".prev");
+        const nextBtn = document.querySelector(".next");
+        const ul = document.querySelector(".slide-wrapper ul");
+    
+        let currentIndex = 0;
+        let totalSlides = slides.length;
+        let visibleSlides = getVisibleSlides();
+    
+        function getVisibleSlides() {
+            if (window.innerWidth <= 480) return 1;
+            if (window.innerWidth <= 768) return 2;
+            return 3;
+        }
+    
+        function getSlideWidth() {
+            const slideWidth = slides[0].offsetWidth;
+            const gap = parseInt(getComputedStyle(ul).gap) || 0;
+            return slideWidth + gap;
+        }
+    
+        function updateSlide() {
+            let maxIndex = totalSlides - visibleSlides; 
+    
+            // 🚀 마지막 이미지가 보이면 이동 멈춤
+            if (currentIndex >= maxIndex) {
+                currentIndex = maxIndex; 
+            }
+    
+            slideWrapper.style.transform = `translateX(-${currentIndex * getSlideWidth()}px)`;
+    
+            // ✅ 버튼 활성화 / 비활성화 처리
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex >= maxIndex; 
+        }
+    
+        function updateSlideWidth() {
+            visibleSlides = getVisibleSlides();
+            updateSlide();
+        }
+    
+        nextBtn.addEventListener("click", function () {
+            let maxIndex = totalSlides - visibleSlides;
+    
+            // ⛔ 6번 이미지가 보이면 더 이상 이동 안되게 처리
+            if (currentIndex < maxIndex) {
+                currentIndex++;
+                updateSlide();
+            }
+        });
+    
+        prevBtn.addEventListener("click", function () {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlide();
+            }
+        });
+    
+        window.addEventListener("resize", updateSlideWidth);
+    
+        // 초기 상태에서 버튼 상태 업데이트
+        updateSlide();
+    </script>
+    
+    
+    
+    
+    
+</body>
+</html>
