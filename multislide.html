@@ -79,63 +79,75 @@
         const nextBtn = document.querySelector(".next");
         const ul = document.querySelector(".slide-wrapper ul");
     
-        let currentIndex = 0;
-        let totalSlides = slides.length;
-        let visibleSlides = getVisibleSlides();
-    
-        function getVisibleSlides() {
-            if (window.innerWidth <= 480) return 1;
-            if (window.innerWidth <= 768) return 2;
-            return 3;
-        }
-    
-        function getSlideWidth() {
-            const slideWidth = slides[0].offsetWidth;
-            const gap = parseInt(getComputedStyle(ul).gap) || 0;
-            return slideWidth + gap;
-        }
-    
-        function updateSlide() {
-            let maxIndex = totalSlides - visibleSlides; 
-    
-            // 🚀 마지막 이미지가 보이면 이동 멈춤
-            if (currentIndex >= maxIndex) {
-                currentIndex = maxIndex; 
-            }
-    
-            slideWrapper.style.transform = `translateX(-${currentIndex * getSlideWidth()}px)`;
-    
-            // ✅ 버튼 활성화 / 비활성화 처리
-            prevBtn.disabled = currentIndex === 0;
-            nextBtn.disabled = currentIndex >= maxIndex; 
-        }
-    
-        function updateSlideWidth() {
-            visibleSlides = getVisibleSlides();
-            updateSlide();
-        }
-    
-        nextBtn.addEventListener("click", function () {
-            let maxIndex = totalSlides - visibleSlides;
-    
-            // ⛔ 6번 이미지가 보이면 더 이상 이동 안되게 처리
-            if (currentIndex < maxIndex) {
-                currentIndex++;
-                updateSlide();
-            }
-        });
-    
-        prevBtn.addEventListener("click", function () {
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateSlide();
-            }
-        });
-    
-        window.addEventListener("resize", updateSlideWidth);
-    
-        // 초기 상태에서 버튼 상태 업데이트
-        updateSlide();
+        let currentIndex = 0; // 현재 슬라이드의 인덱스를 0으로 초기화
+let totalSlides = slides.length; // 전체 슬라이드 개수를 가져옴
+let visibleSlides = getVisibleSlides(); // 화면 크기에 따라 보이는 슬라이드 개수를 초기화
+
+// 화면 크기에 따라 보이는 슬라이드 개수를 반환하는 함수
+function getVisibleSlides() {
+    if (window.innerWidth <= 480) return 1; // 화면 너비가 480px 이하일 경우 1개 슬라이드 표시
+    if (window.innerWidth <= 768) return 2; // 화면 너비가 768px 이하일 경우 2개 슬라이드 표시
+    return 3; // 그 외의 경우 3개 슬라이드 표시
+}
+
+// 슬라이드 하나의 전체 너비를 계산하는 함수
+function getSlideWidth() {
+    const slideWidth = slides[0].offsetWidth; // 첫 번째 슬라이드의 너비를 가져옴
+    const gap = parseInt(getComputedStyle(ul).gap) || 0; // 슬라이드 간의 간격을 계산, 없으면 0
+    return slideWidth + gap; // 슬라이드 너비 + 간격을 반환
+}
+
+// 슬라이드 이동을 처리하는 함수
+function updateSlide() {
+    let maxIndex = totalSlides - visibleSlides; // 최대 인덱스 계산 (전체 슬라이드 개수 - 보이는 슬라이드 개수)
+
+    // 🚀 마지막 이미지가 보이면 더 이상 이동하지 않도록 처리
+    if (currentIndex >= maxIndex) {
+        currentIndex = maxIndex; // currentIndex가 maxIndex 이상으로 가지 않도록 제한
+    }
+
+    // 슬라이드 컨테이너를 이동시켜서 슬라이드를 표시
+    slideWrapper.style.transform = `translateX(-${currentIndex * getSlideWidth()}px)`; 
+
+    // ✅ 이전 버튼 비활성화 처리
+    prevBtn.disabled = currentIndex === 0; // 첫 번째 슬라이드라면 이전 버튼 비활성화
+
+    // ✅ 다음 버튼 비활성화 처리
+    nextBtn.disabled = currentIndex >= maxIndex; // 마지막 슬라이드라면 다음 버튼 비활성화
+}
+
+// 화면 크기 변경 시, 보이는 슬라이드 개수를 업데이트하는 함수
+function updateSlideWidth() {
+    visibleSlides = getVisibleSlides(); // 화면 크기 변경 후 보이는 슬라이드 개수를 다시 계산
+    updateSlide(); // 슬라이드 위치를 업데이트
+}
+
+// 다음 버튼 클릭 시 처리
+nextBtn.addEventListener("click", function () {
+    let maxIndex = totalSlides - visibleSlides; // 최대 인덱스를 다시 계산
+
+    // ⛔ 마지막 슬라이드가 아니면 currentIndex를 증가시켜 슬라이드를 이동
+    if (currentIndex < maxIndex) {
+        currentIndex++; // currentIndex 증가
+        updateSlide(); // 슬라이드 위치 업데이트
+    }
+});
+
+// 이전 버튼 클릭 시 처리
+prevBtn.addEventListener("click", function () {
+    // ⛔ 첫 번째 슬라이드가 아니면 currentIndex를 감소시켜 슬라이드를 이동
+    if (currentIndex > 0) {
+        currentIndex--; // currentIndex 감소
+        updateSlide(); // 슬라이드 위치 업데이트
+    }
+});
+
+// 윈도우 크기 변경 시 보이는 슬라이드 개수를 업데이트하는 이벤트 리스너
+window.addEventListener("resize", updateSlideWidth);
+
+// 초기 상태에서 슬라이드 위치와 버튼 상태를 업데이트
+updateSlide();
+
     </script>
     
     
